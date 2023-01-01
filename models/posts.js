@@ -9,8 +9,9 @@ const postSchema = new mongoose.Schema({
   image: { data: Buffer, contentType: String },
   date: { type: String },
   createdAt: { type: Date, default: Date.now },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "Bloguser" },
 });
 
-const postModel = mongoose.model("Post", postSchema);
+const postModel = mongoose.model("EmbifiPosts", postSchema);
 
 module.exports = postModel;

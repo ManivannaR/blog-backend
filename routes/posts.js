@@ -4,7 +4,7 @@ const upload = require("../middlewares/posts");
 const fs = require("fs");
 const BSON = require("bson");
 
-router.post("/post", upload.single("image"), async (req, res) => {
+router.post("/user/posts", upload.single("image"), async (req, res) => {
   try {
     const { name, email, title, content, description, image, date } = req.body;
     const post = new Post({
@@ -18,29 +18,33 @@ router.post("/post", upload.single("image"), async (req, res) => {
         contentType: "image/png",
       },
       date: date,
+      user: req.user,
     });
     await post.save();
-    res.status(200).json({ status: "Success" });
+    res.status(201).json({ message: "Post added" });
   } catch (e) {
-    res.status(400).json({ status: "Failed", message: e.message });
+    res.status(500).json({ message: e.message });
   }
 });
 
-router.get("/post", async (req, res) => {
+router.get("/user/posts", async (req, res) => {
   try {
-    const data = await Post.find({}).sort({ createdAt: -1 });
-    res.status(200).json({ status: "Success", data: data });
+    const data = await Post.find({ user: req.user }).sort({ createdAt: -1 });
+    res.status(200).json({ data: data });
   } catch (e) {
-    res.status(400).json({ status: "Failed", message: e.message });
+    res.status(400).json({ message: e.message });
   }
 });
 
-router.get("/post/:id", async (req, res) => {
-  const data = await Post.findOne({ _id: BSON.ObjectId(req.params.id) });
-  res.status(200).json({
-    status: "Success",
-    data: data,
-  });
+router.get("/user/posts/:id", async (req, res) => {
+  try {
+    const data = await Post.findOne({ _id: BSON.ObjectId(req.params.id) });
+    res.status(200).json({
+      data: data,
+    });
+  } catch (e) {
+    res.status(400).json({ message: e.message });
+  }
 });
 
 module.exports = router;
