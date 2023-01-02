@@ -21,7 +21,7 @@ router.post("/user/posts", upload.single("image"), async (req, res) => {
       user: req.user,
     });
     await post.save();
-    res.status(201).json({ message: "Post added" });
+    res.status(201).json({ result: "success", message: "Post Added" });
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
